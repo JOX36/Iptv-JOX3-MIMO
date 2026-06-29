@@ -1,94 +1,52 @@
 package com.jox3.tv.ui.movies
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jox3.tv.data.repository.MovieRepository
 import com.jox3.tv.data.repository.SettingsRepository
-import com.jox3.tv.domain.model.Category
-import com.jox3.tv.domain.model.Movie
-import com.jox3.tv.domain.model.ServerConfig
+import com.jox3.tv.domain.model.MovieDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-data class MoviesUiState(
+data class MovieDetailUiState(
     val isLoading: Boolean = true,
-    val categories: List<Category> = emptyList(),
-    val movies: List<Movie> = emptyList(),
-    val filteredMovies: List<Movie> = emptyList(),
-    val selectedCategoryId: String? = null,
-    val searchQuery: String = "",
-    val serverConfig: ServerConfig? = null,
+    val movie: MovieDetail? = null,
+    val streamUrl: String? = null,
     val error: String? = null
 )
 
 @HiltViewModel
-class MoviesViewModel @Inject constructor(
-    private val settingsRepository: SettingsRepository,
-    private val movieRepository: MovieRepository
+class MovieDetailViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+    private val movieRepository: MovieRepository,
+    private val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(MoviesUiState())
-    val uiState: StateFlow<MoviesUiState> = _uiState.asStateFlow()
+    private val vodId: Int = savedStateHandle.get<Int>("vodId") ?: 0
+    private val _uiState = MutableStateFlow(MovieDetailUiState())
+    val uiState: StateFlow<MovieDetailUiState> = _uiState.asStateFlow()
 
-    private var currentAccount: ServerConfig? = null
+    init { loadMovie() }
 
-    init {
-        loadData()
-    }
-
-    private fun loadData() {
+    private fun loadMovie() {
         viewModelScope.launch {
-            settingsRepository.getActiveAccount().collect { account ->
-                if (account == null) {
-                    _uiState.value = MoviesUiState(isLoading = false)
-                    return@collect
+            val account = settingsRepository.getActiveAccountSync() ?: return@launch
+            try {
+                val detail = movieRepository.getMovieDetail(account, vodId)
+                if (detail != null) {
+                    val url = movieRepository.getStreamUrl(account, vodId, null)
+                    _uiState.value = MovieDetailUiState(isLoading = false, movie = detail, streamUrl = url)
+                } else {
+                    _uiState.value = MovieDetailUiState(isLoading = false, error = "Película no encontrada")
                 }
-                currentAccount = account
-                _uiState.value = _uiState.value.copy(serverConfig = account)
-
-                launch {
-                    movieRepository.getCategories(account.id).collect { categories ->
-                        _uiState.value = _uiState.value.copy(categories = categories)
-                    }
-                }
-                launch {
-                    movieRepository.getMovies(account.id).collect { movies ->
-                        _uiState.value = _uiState.value.copy(
-                            movies = movies,
-                            filteredMovies = movies,
-                            isLoading = false
-                        )
-                        applyFilters()
-                    }
-                }
+            } catch (e: Exception) {
+                _uiState.value = MovieDetailUiState(isLoading = false, error = e.message)
             }
         }
-    }
-
-    fun selectCategory(categoryId: String?) {
-        _uiState.value = _uiState.value.copy(selectedCategoryId = categoryId)
-        applyFilters()
-    }
-
-    fun updateSearch(query: String) {
-        _uiState.value = _uiState.value.copy(searchQuery = query)
-        applyFilters()
-    }
-
-    private fun applyFilters() {
-        val state = _uiState.value
-        val filtered = state.movies.filter { movie ->
-            val matchesCategory = state.selectedCategoryId == null || movie.categoryId == state.selectedCategoryId
-            val matchesSearch = state.searchQuery.isEmpty() || movie.name.contains(state.searchQuery, ignoreCase = true)
-            matchesCategory && matchesSearch
-        }
-        _uiState.value = _uiState.value.copy(filteredMovies = filtered)
-    }
-
-    fun getStreamUrl(streamId: Int, extension: String?): String {
-        val config = currentAccount ?: return ""
-        return movieRepository.getStreamUrl(config, streamId, extension)
     }
 }
