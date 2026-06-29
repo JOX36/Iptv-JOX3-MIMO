@@ -7,23 +7,26 @@ data class ServerConfig(
     val port: String = "",
     val username: String = "",
     val password: String = "",
+    val useHttps: Boolean = false,
     val isActive: Boolean = false
 ) {
+    private val scheme: String get() = if (useHttps) "https" else "http"
+
     val baseUrl: String get() {
         val cleanUrl = url.trimEnd('/').removePrefix("http://").removePrefix("https://")
-        return "http://$cleanUrl:$port/"
+        return "$scheme://$cleanUrl:$port/"
     }
     val streamBaseUrl: String get() {
         val cleanUrl = url.trimEnd('/').removePrefix("http://").removePrefix("https://")
-        return "http://$cleanUrl:$port/live/$username/$password/"
+        return "$scheme://$cleanUrl:$port/live/$username/$password/"
     }
     val movieBaseUrl: String get() {
         val cleanUrl = url.trimEnd('/').removePrefix("http://").removePrefix("https://")
-        return "http://$cleanUrl:$port/movie/$username/$password/"
+        return "$scheme://$cleanUrl:$port/movie/$username/$password/"
     }
     val seriesBaseUrl: String get() {
         val cleanUrl = url.trimEnd('/').removePrefix("http://").removePrefix("https://")
-        return "http://$cleanUrl:$port/series/$username/$password/"
+        return "$scheme://$cleanUrl:$port/series/$username/$password/"
     }
 }
 
