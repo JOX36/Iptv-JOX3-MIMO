@@ -52,31 +52,27 @@ class LiveRepository @Inject constructor(
     }
 
     suspend fun refreshCategories(config: ServerConfig) {
-        try {
-            val categories = api.getLiveCategories(config.username, config.password)
-            categoryDao.deleteByType("live", config.id)
-            categoryDao.insertAll(categories.map {
-                CategoryEntity(
-                    categoryId = it.categoryId ?: "",
-                    type = "live",
-                    accountId = config.id,
-                    categoryName = it.categoryName ?: ""
-                )
-            })
-        } catch (_: Exception) {}
+        val categories = api.getLiveCategories(config.username, config.password)
+        categoryDao.deleteByType("live", config.id)
+        categoryDao.insertAll(categories.map {
+            CategoryEntity(
+                categoryId = it.categoryId ?: "",
+                type = "live",
+                accountId = config.id,
+                categoryName = it.categoryName ?: ""
+            )
+        })
     }
 
     suspend fun refreshChannels(config: ServerConfig, categoryId: String? = null) {
-        try {
-            val channels = api.getLiveStreams(
-                config.username, config.password,
-                categoryId = categoryId
-            )
-            if (categoryId == null) {
-                liveChannelDao.deleteAllForAccount(config.id)
-            }
-            liveChannelDao.insertAll(channels.map { it.toEntity(config.id) })
-        } catch (_: Exception) {}
+        val channels = api.getLiveStreams(
+            config.username, config.password,
+            categoryId = categoryId
+        )
+        if (categoryId == null) {
+            liveChannelDao.deleteAllForAccount(config.id)
+        }
+        liveChannelDao.insertAll(channels.map { it.toEntity(config.id) })
     }
 
     suspend fun getShortEpg(config: ServerConfig, streamId: Int): List<EpgProgram> {
