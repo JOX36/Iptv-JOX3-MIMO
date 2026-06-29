@@ -47,6 +47,15 @@ class SeriesViewModel @Inject constructor(
                 _uiState.value = _uiState.value.copy(serverConfig = account)
 
                 launch {
+                    try {
+                        seriesRepository.refreshCategories(account)
+                        seriesRepository.refreshSeries(account)
+                    } catch (e: Exception) {
+                        _uiState.value = _uiState.value.copy(error = e.message, isLoading = false)
+                    }
+                }
+
+                launch {
                     seriesRepository.getCategories(account.id).collect { categories ->
                         _uiState.value = _uiState.value.copy(categories = categories)
                     }
