@@ -11,6 +11,7 @@ data class ServerAccount(
     val port: String,
     val username: String,
     val password: String,
+    val useHttps: Boolean = false,
     val isActive: Boolean = false,
     val createdAt: Long = System.currentTimeMillis()
 )
