@@ -65,7 +65,7 @@ fun SettingsScreen(
                         .clickable { navController.navigate("login") },
                     colors = CardDefaults.cardColors(containerColor = SurfaceDark),
                     shape = RoundedCornerShape(16.dp),
-                    border = CardDefaults.outlinedCardBorder().copy(
+                                        border = BorderStroke(1.dp, Brush.linearGradient(listOf(CyanAccent.copy(0.3f), PurpleAccent.copy(0.3f))))
                         brush = Brush.linearGradient(listOf(CyanAccent.copy(0.3f), PurpleAccent.copy(0.3f)))
                     )
                 ) {
@@ -195,7 +195,7 @@ private fun ServerAccountCard(account: ServerConfig, onActivate: () -> Unit, onD
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = if (account.isActive) CyanAccent.copy(0.08f) else SurfaceDark),
         shape = RoundedCornerShape(16.dp),
-        border = if (account.isActive) CardDefaults.outlinedCardBorder().copy(brush = Brush.linearGradient(listOf(CyanAccent.copy(0.4f), PurpleAccent.copy(0.2f))))) else null
+                border = if (account.isActive) BorderStroke(1.dp, Brush.linearGradient(listOf(CyanAccent.copy(0.4f), PurpleAccent.copy(0.2f)))) else null
     ) {
         Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
             Box(Modifier.size(44.dp).clip(RoundedCornerShape(12.dp)).background(if (account.isActive) CyanAccent.copy(0.15f) else SurfaceVariantDark), contentAlignment = Alignment.Center) {
