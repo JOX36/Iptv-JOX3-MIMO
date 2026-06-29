@@ -13,7 +13,7 @@ import com.jox3.tv.data.local.entity.*
         SeriesEntity::class,
         CategoryEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class Jox3Database : RoomDatabase() {
