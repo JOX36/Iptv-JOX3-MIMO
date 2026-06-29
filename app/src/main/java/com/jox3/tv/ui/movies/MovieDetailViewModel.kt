@@ -38,9 +38,13 @@ class MovieDetailViewModel @Inject constructor(
             val account = settingsRepository.getActiveAccountSync() ?: return@launch
             try {
                 val detail = movieRepository.getMovieDetail(account, vodId)
-                val ext = detail.backdropPaths.firstOrNull() ?: "mp4"
-                val url = "${account.movieBaseUrl}$vodId.$ext"
-                _uiState.value = MovieDetailUiState(movie = detail, streamUrl = url)
+                if (detail != null) {
+                    val ext = detail.backdropPaths.firstOrNull() ?: "mp4"
+                    val url = "${account.movieBaseUrl}$vodId.$ext"
+                    _uiState.value = MovieDetailUiState(movie = detail, streamUrl = url)
+                } else {
+                    _uiState.value = MovieDetailUiState(error = "Película no encontrada")
+                }
             } catch (e: Exception) {
                 _uiState.value = MovieDetailUiState(error = e.message)
             }

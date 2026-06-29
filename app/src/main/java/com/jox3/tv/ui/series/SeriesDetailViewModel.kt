@@ -39,8 +39,12 @@ class SeriesDetailViewModel @Inject constructor(
             val account = settingsRepository.getActiveAccountSync() ?: return@launch
             try {
                 val detail = seriesRepository.getSeriesDetail(account, seriesId)
-                val firstSeason = detail.seasons.firstOrNull()?.seasonNumber ?: 1
-                _uiState.value = SeriesDetailUiState(series = detail, selectedSeason = firstSeason, seriesBaseUrl = account.seriesBaseUrl)
+                if (detail != null) {
+                    val firstSeason = detail.seasons.firstOrNull()?.seasonNumber ?: 1
+                    _uiState.value = SeriesDetailUiState(series = detail, selectedSeason = firstSeason, seriesBaseUrl = account.seriesBaseUrl)
+                } else {
+                    _uiState.value = SeriesDetailUiState(error = "Serie no encontrada")
+                }
             } catch (e: Exception) {
                 _uiState.value = SeriesDetailUiState(error = e.message)
             }
