@@ -49,6 +49,15 @@ class MoviesViewModel @Inject constructor(
                 _uiState.value = _uiState.value.copy(serverConfig = account)
 
                 launch {
+                    try {
+                        movieRepository.refreshCategories(account)
+                        movieRepository.refreshMovies(account)
+                    } catch (e: Exception) {
+                        _uiState.value = _uiState.value.copy(error = e.message, isLoading = false)
+                    }
+                }
+
+                launch {
                     movieRepository.getCategories(account.id).collect { categories ->
                         _uiState.value = _uiState.value.copy(categories = categories)
                     }
