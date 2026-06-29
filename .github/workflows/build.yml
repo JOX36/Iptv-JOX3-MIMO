@@ -22,7 +22,7 @@ jobs:
       run: chmod +x gradlew
 
     - name: Build Debug APK
-      run: ./gradlew assembleDebug --stacktrace --info 2>&1 | tail -200
+      run: ./gradlew assembleDebug --stacktrace
 
     - name: Upload APK
       if: success()
