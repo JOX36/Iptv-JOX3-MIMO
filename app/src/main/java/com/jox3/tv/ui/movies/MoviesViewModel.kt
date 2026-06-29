@@ -6,7 +6,6 @@ import com.jox3.tv.data.repository.MovieRepository
 import com.jox3.tv.data.repository.SettingsRepository
 import com.jox3.tv.domain.model.Category
 import com.jox3.tv.domain.model.Movie
-import com.jox3.tv.domain.model.MovieDetail
 import com.jox3.tv.domain.model.ServerConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -21,13 +20,6 @@ data class MoviesUiState(
     val selectedCategoryId: String? = null,
     val searchQuery: String = "",
     val serverConfig: ServerConfig? = null,
-    val error: String? = null
-)
-
-data class MovieDetailUiState(
-    val isLoading: Boolean = true,
-    val detail: MovieDetail? = null,
-    val streamUrl: String = "",
     val error: String? = null
 )
 
@@ -98,28 +90,5 @@ class MoviesViewModel @Inject constructor(
     fun getStreamUrl(streamId: Int, extension: String?): String {
         val config = currentAccount ?: return ""
         return movieRepository.getStreamUrl(config, streamId, extension)
-    }
-}
-
-@HiltViewModel
-class MovieDetailViewModel @Inject constructor(
-    private val settingsRepository: SettingsRepository,
-    private val movieRepository: MovieRepository
-) : ViewModel() {
-
-    private val _uiState = MutableStateFlow(MovieDetailUiState())
-    val uiState: StateFlow<MovieDetailUiState> = _uiState.asStateFlow()
-
-    fun loadDetail(vodId: Int) {
-        viewModelScope.launch {
-            val account = settingsRepository.getActiveAccountSync() ?: return@launch
-            val detail = movieRepository.getMovieDetail(account, vodId)
-            val url = movieRepository.getStreamUrl(account, vodId, null)
-            _uiState.value = MovieDetailUiState(
-                isLoading = false,
-                detail = detail,
-                streamUrl = url
-            )
-        }
     }
 }
