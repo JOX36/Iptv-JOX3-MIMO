@@ -21,13 +21,6 @@ data class SeriesUiState(
     val error: String? = null
 )
 
-data class SeriesDetailUiState(
-    val isLoading: Boolean = true,
-    val detail: SeriesDetail? = null,
-    val selectedSeason: Int = 0,
-    val error: String? = null
-)
-
 @HiltViewModel
 class SeriesViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
@@ -90,40 +83,6 @@ class SeriesViewModel @Inject constructor(
             matchesCategory && matchesSearch
         }
         _uiState.value = _uiState.value.copy(filteredSeries = filtered)
-    }
-
-    fun getEpisodeStreamUrl(episodeId: String, extension: String?): String {
-        val config = currentAccount ?: return ""
-        return seriesRepository.getEpisodeStreamUrl(config, episodeId, extension)
-    }
-}
-
-@HiltViewModel
-class SeriesDetailViewModel @Inject constructor(
-    private val settingsRepository: SettingsRepository,
-    private val seriesRepository: SeriesRepository
-) : ViewModel() {
-
-    private val _uiState = MutableStateFlow(SeriesDetailUiState())
-    val uiState: StateFlow<SeriesDetailUiState> = _uiState.asStateFlow()
-
-    private var currentAccount: ServerConfig? = null
-
-    fun loadDetail(seriesId: Int) {
-        viewModelScope.launch {
-            val account = settingsRepository.getActiveAccountSync() ?: return@launch
-            currentAccount = account
-            val detail = seriesRepository.getSeriesDetail(account, seriesId)
-            _uiState.value = SeriesDetailUiState(
-                isLoading = false,
-                detail = detail,
-                selectedSeason = detail?.seasons?.firstOrNull()?.seasonNumber ?: 0
-            )
-        }
-    }
-
-    fun selectSeason(season: Int) {
-        _uiState.value = _uiState.value.copy(selectedSeason = season)
     }
 
     fun getEpisodeStreamUrl(episodeId: String, extension: String?): String {
