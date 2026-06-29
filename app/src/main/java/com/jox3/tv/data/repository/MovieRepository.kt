@@ -51,28 +51,24 @@ class MovieRepository @Inject constructor(
     }
 
     suspend fun refreshCategories(config: ServerConfig) {
-        try {
-            val categories = api.getVodCategories(config.username, config.password)
-            categoryDao.deleteByType("vod", config.id)
-            categoryDao.insertAll(categories.map {
-                CategoryEntity(
-                    categoryId = it.categoryId ?: "",
-                    type = "vod",
-                    accountId = config.id,
-                    categoryName = it.categoryName ?: ""
-                )
-            })
-        } catch (_: Exception) {}
+        val categories = api.getVodCategories(config.username, config.password)
+        categoryDao.deleteByType("vod", config.id)
+        categoryDao.insertAll(categories.map {
+            CategoryEntity(
+                categoryId = it.categoryId ?: "",
+                type = "vod",
+                accountId = config.id,
+                categoryName = it.categoryName ?: ""
+            )
+        })
     }
 
     suspend fun refreshMovies(config: ServerConfig, categoryId: String? = null) {
-        try {
-            val movies = api.getVodStreams(config.username, config.password, categoryId = categoryId)
-            if (categoryId == null) {
-                movieDao.deleteAllForAccount(config.id)
-            }
-            movieDao.insertAll(movies.map { it.toEntity(config.id) })
-        } catch (_: Exception) {}
+        val movies = api.getVodStreams(config.username, config.password, categoryId = categoryId)
+        if (categoryId == null) {
+            movieDao.deleteAllForAccount(config.id)
+        }
+        movieDao.insertAll(movies.map { it.toEntity(config.id) })
     }
 
     suspend fun getMovieDetail(config: ServerConfig, vodId: Int): MovieDetail? {
