@@ -13,7 +13,6 @@ val Jox3Typography = Typography(
         fontSize = 34.sp,
         lineHeight = 40.sp,
         letterSpacing = 0.sp,
-        color = TextPrimary
     ),
     displayMedium = TextStyle(
         fontFamily = FontFamily.Default,
@@ -21,7 +20,6 @@ val Jox3Typography = Typography(
         fontSize = 28.sp,
         lineHeight = 34.sp,
         letterSpacing = 0.sp,
-        color = TextPrimary
     ),
     headlineLarge = TextStyle(
         fontFamily = FontFamily.Default,
@@ -29,7 +27,6 @@ val Jox3Typography = Typography(
         fontSize = 24.sp,
         lineHeight = 30.sp,
         letterSpacing = 0.sp,
-        color = TextPrimary
     ),
     headlineMedium = TextStyle(
         fontFamily = FontFamily.Default,
@@ -37,7 +34,6 @@ val Jox3Typography = Typography(
         fontSize = 20.sp,
         lineHeight = 26.sp,
         letterSpacing = 0.sp,
-        color = TextPrimary
     ),
     titleLarge = TextStyle(
         fontFamily = FontFamily.Default,
@@ -45,7 +41,6 @@ val Jox3Typography = Typography(
         fontSize = 18.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.sp,
-        color = TextPrimary
     ),
     titleMedium = TextStyle(
         fontFamily = FontFamily.Default,
@@ -53,7 +48,6 @@ val Jox3Typography = Typography(
         fontSize = 16.sp,
         lineHeight = 22.sp,
         letterSpacing = 0.15.sp,
-        color = TextPrimary
     ),
     bodyLarge = TextStyle(
         fontFamily = FontFamily.Default,
@@ -61,7 +55,6 @@ val Jox3Typography = Typography(
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp,
-        color = TextPrimary
     ),
     bodyMedium = TextStyle(
         fontFamily = FontFamily.Default,
@@ -69,7 +62,6 @@ val Jox3Typography = Typography(
         fontSize = 14.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.25.sp,
-        color = TextSecondary
     ),
     bodySmall = TextStyle(
         fontFamily = FontFamily.Default,
@@ -77,7 +69,6 @@ val Jox3Typography = Typography(
         fontSize = 12.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.4.sp,
-        color = TextTertiary
     ),
     labelLarge = TextStyle(
         fontFamily = FontFamily.Default,
@@ -85,7 +76,6 @@ val Jox3Typography = Typography(
         fontSize = 14.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.1.sp,
-        color = TextPrimary
     ),
     labelMedium = TextStyle(
         fontFamily = FontFamily.Default,
@@ -93,7 +83,6 @@ val Jox3Typography = Typography(
         fontSize = 12.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.5.sp,
-        color = TextSecondary
     ),
     labelSmall = TextStyle(
         fontFamily = FontFamily.Default,
@@ -101,6 +90,5 @@ val Jox3Typography = Typography(
         fontSize = 10.sp,
         lineHeight = 14.sp,
         letterSpacing = 0.5.sp,
-        color = TextTertiary
     )
 )
