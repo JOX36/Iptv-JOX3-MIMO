@@ -1,6 +1,7 @@
 package com.jox3.tv.ui.settings
 
 import androidx.compose.animation.*
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -65,9 +66,7 @@ fun SettingsScreen(
                         .clickable { navController.navigate("login") },
                     colors = CardDefaults.cardColors(containerColor = SurfaceDark),
                     shape = RoundedCornerShape(16.dp),
-                                        border = BorderStroke(1.dp, Brush.linearGradient(listOf(CyanAccent.copy(0.3f), PurpleAccent.copy(0.3f))))
-                        brush = Brush.linearGradient(listOf(CyanAccent.copy(0.3f), PurpleAccent.copy(0.3f)))
-                    )
+                    border = BorderStroke(1.dp, Brush.linearGradient(listOf(CyanAccent.copy(0.3f), PurpleAccent.copy(0.3f))))
                 ) {
                     Row(
                         modifier = Modifier.padding(16.dp),
