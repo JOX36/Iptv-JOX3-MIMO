@@ -51,6 +51,15 @@ class LiveViewModel @Inject constructor(
                 _uiState.value = _uiState.value.copy(serverConfig = account)
 
                 launch {
+                    try {
+                        liveRepository.refreshCategories(account)
+                        liveRepository.refreshChannels(account)
+                    } catch (e: Exception) {
+                        _uiState.value = _uiState.value.copy(error = e.message, isLoading = false)
+                    }
+                }
+
+                launch {
                     liveRepository.getCategories(account.id).collect { categories ->
                         _uiState.value = _uiState.value.copy(categories = categories)
                     }
