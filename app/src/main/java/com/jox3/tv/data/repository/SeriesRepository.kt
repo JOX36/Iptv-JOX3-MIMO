@@ -40,28 +40,24 @@ class SeriesRepository @Inject constructor(
     }
 
     suspend fun refreshCategories(config: ServerConfig) {
-        try {
-            val categories = api.getSeriesCategories(config.username, config.password)
-            categoryDao.deleteByType("series", config.id)
-            categoryDao.insertAll(categories.map {
-                CategoryEntity(
-                    categoryId = it.categoryId ?: "",
-                    type = "series",
-                    accountId = config.id,
-                    categoryName = it.categoryName ?: ""
-                )
-            })
-        } catch (_: Exception) {}
+        val categories = api.getSeriesCategories(config.username, config.password)
+        categoryDao.deleteByType("series", config.id)
+        categoryDao.insertAll(categories.map {
+            CategoryEntity(
+                categoryId = it.categoryId ?: "",
+                type = "series",
+                accountId = config.id,
+                categoryName = it.categoryName ?: ""
+            )
+        })
     }
 
     suspend fun refreshSeries(config: ServerConfig, categoryId: String? = null) {
-        try {
-            val series = api.getSeries(config.username, config.password, categoryId = categoryId)
-            if (categoryId == null) {
-                seriesDao.deleteAllForAccount(config.id)
-            }
-            seriesDao.insertAll(series.map { it.toEntity(config.id) })
-        } catch (_: Exception) {}
+        val series = api.getSeries(config.username, config.password, categoryId = categoryId)
+        if (categoryId == null) {
+            seriesDao.deleteAllForAccount(config.id)
+        }
+        seriesDao.insertAll(series.map { it.toEntity(config.id) })
     }
 
     suspend fun getSeriesDetail(config: ServerConfig, seriesId: Int): SeriesDetail? {
