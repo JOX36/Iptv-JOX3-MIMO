@@ -27,8 +27,9 @@ class SettingsRepository @Inject constructor(
 
     suspend fun login(url: String, port: String, username: String, password: String): Result<ServerConfig> {
         return try {
+            val scheme = if (url.startsWith("https://")) "https" else "http"
             val baseUrl = url.trimEnd('/').removePrefix("http://").removePrefix("https://")
-            val api = createApiForServer(baseUrl, port)
+            val api = createApiForServer(baseUrl, port, scheme)
             val response = api.login(username, password)
 
             if (response.userInfo?.auth == 1) {
@@ -39,6 +40,7 @@ class SettingsRepository @Inject constructor(
                     port = port,
                     username = username,
                     password = password,
+                    useHttps = scheme == "https",
                     isActive = false
                 )
                 val id = serverAccountDao.insert(account)
@@ -62,8 +64,9 @@ class SettingsRepository @Inject constructor(
 
     suspend fun testConnection(url: String, port: String, username: String, password: String): Result<Boolean> {
         return try {
+            val scheme = if (url.startsWith("https://")) "https" else "http"
             val baseUrl = url.trimEnd('/').removePrefix("http://").removePrefix("https://")
-            val api = createApiForServer(baseUrl, port)
+            val api = createApiForServer(baseUrl, port, scheme)
             val response = api.login(username, password)
             if (response.userInfo?.auth == 1) {
                 Result.success(true)
@@ -75,9 +78,9 @@ class SettingsRepository @Inject constructor(
         }
     }
 
-    private fun createApiForServer(url: String, port: String): XtreamApi {
+    private fun createApiForServer(url: String, port: String, scheme: String = "http"): XtreamApi {
         val retrofit = retrofit2.Retrofit.Builder()
-            .baseUrl("http://$url:$port/")
+            .baseUrl("$scheme://$url:$port/")
             .addConverterFactory(retrofit2.converter.moshi.MoshiConverterFactory.create())
             .client(
                 okhttp3.OkHttpClient.Builder()
@@ -96,6 +99,7 @@ class SettingsRepository @Inject constructor(
         port = port,
         username = username,
         password = password,
+        useHttps = useHttps,
         isActive = isActive
     )
 }
